@@ -13,18 +13,12 @@ use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!();
 
 use crate::service::store;
-use dotenv::dotenv;
-use std::env;
-// ---------------------------------------------
-// Property
-// ---------------------------------------------
+
+const DATABASE_URL: &str = "AppSystem.db";
 
 pub fn establish_connection(config: &Arc<Config>) -> ConnPool {
-    dotenv().ok();
-
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let mut path = store::get_app_path(config);
-    path.push(database_url);
+    path.push(DATABASE_URL);
     let manager = ConnectionManager::<SqliteConnection>::new(path.to_str().unwrap());
     Pool::builder()
         .build(manager)

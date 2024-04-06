@@ -26,6 +26,16 @@ e.g.
 diesel migration generate create_posts
 ```
 
+Create a schema file in `src/schema.rs` and add the following code:
+```pwsh
+diesel migration run --database-url <database_url>
+```
+
+e.g.
+```pwsh
+diesel migration run --database-url AppSystem.db
+```
+
 ## Building
 
 ```pwsh

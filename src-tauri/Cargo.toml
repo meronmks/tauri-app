@@ -22,7 +22,13 @@ tauri-specta = { version = "1.0.2", features = ["typescript"] }
 diesel = { version = "2.1.0", features = ["sqlite", "r2d2", "chrono"] }
 libsqlite3-sys = { version = "0.28.0", features = ["bundled"] }
 diesel_migrations = { version = "2.0.0", features = ["sqlite"] }
-dotenv = "0.15.0"
+uuid = { version = "1.2.2", features = ["v4", "serde"] }
+webbrowser = "0.8.13"
+reqwest = { version = "0.12.2", features = ["json"] }
+tokio = { version = "1.37.0", features = ["process"] }
+tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
+tracing = "0.1"
+tracing-subscriber = "0.3"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem and the built-in dev server is disabled.

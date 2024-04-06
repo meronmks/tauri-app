@@ -14,4 +14,12 @@ export function utilGetVersion() {
     return invoke()<string>("util_get_version")
 }
 
+export function miauthInit(sessionId: string, serverDomain: string) {
+    return invoke()<null>("miauth_init", { sessionId,serverDomain })
+}
+
+export function miauthCheck(sessionId: string, serverDomain: string) {
+    return invoke()<boolean>("miauth_check", { sessionId,serverDomain })
+}
+
 
