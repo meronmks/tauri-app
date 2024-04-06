@@ -22,4 +22,8 @@ export function miauthCheck(sessionId: string, serverDomain: string) {
     return invoke()<boolean>("miauth_check", { sessionId,serverDomain })
 }
 
+export function fetchRawMisskeyApi(serverDomain: string, endpoint: string, parms: string) {
+    return invoke()<any>("fetch_raw_misskey_api", { serverDomain,endpoint,parms })
+}
+
 

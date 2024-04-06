@@ -1,7 +1,7 @@
 use std::{fmt::Display, sync::Mutex};
 
 use reqwest::Error;
-use serde::{Deserialize, Serialize};
+use serde::{de, Deserialize, Serialize};
 use serde_json::json;
 use specta;
 use tauri::{generate_handler, Invoke, Runtime};
@@ -11,7 +11,7 @@ use webbrowser;
 use crate::db::{account_repo::AccountRepo, manager::ConnPool};
 
 pub(crate) fn handlers<R: Runtime>() -> impl Fn(Invoke<R>) + Send + Sync + 'static {
-    generate_handler![util_get_version, miauth_init, miauth_check,]
+    generate_handler![util_get_version, miauth_init, miauth_check,fetch_raw_misskey_api,]
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, specta::Type)]
@@ -23,7 +23,7 @@ struct Note {
 #[cfg(debug_assertions)]
 pub(crate) fn export_ts() {
     tauri_specta::ts::export_with_cfg(
-        specta::collect_types![util_get_version, miauth_init, miauth_check,].unwrap(),
+        specta::collect_types![util_get_version, miauth_init, miauth_check,fetch_raw_misskey_api,].unwrap(),
         specta::ts::ExportConfiguration::new().bigint(specta::ts::BigIntExportBehavior::Number),
         "../lib/bindings.ts",
     )
@@ -108,4 +108,30 @@ async fn miauth_check(
     } else{
         Ok(false)
     }
+}
+
+#[tauri::command]
+#[specta::specta]
+#[tracing::instrument]
+async fn fetch_raw_misskey_api(
+    server_domain: String,
+    endpoint: String,
+    parms: String,
+) -> Result<serde_json::Value, RustError> {
+    let url = format!("https://{}/api/{}", server_domain, endpoint);
+    debug!("url: {}", url);
+    let body = serde_json::from_str::<serde_json::Value>(&parms).unwrap();
+    debug!("body: {:?}", body);
+    let client = reqwest::Client::new();
+    let resp = client
+        .post(&url)
+        .header(reqwest::header::CONTENT_TYPE, "application/json")
+        .json(&body)
+        .send()
+        .await?
+        .text()
+        .await?;
+    let res_json: serde_json::Value = serde_json::from_str(&resp).unwrap();
+    debug!("res_json: {:?}", res_json);
+    Ok(res_json)
 }
