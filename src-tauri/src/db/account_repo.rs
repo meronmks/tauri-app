@@ -4,6 +4,7 @@ use crate::schema::accounts::dsl::*;
 
 use diesel::sqlite::SqliteConnection;
 use diesel::RunQueryDsl;
+use tracing::error;
 
 pub struct AccountRepo;
 
@@ -21,5 +22,15 @@ impl AccountRepo {
             .values(&new_account)
             .execute(conn)
             .expect("Error saving new account")
+    }
+
+    pub(crate) fn find_all(conn: &mut SqliteConnection) -> Vec<Account> {
+        match accounts.load::<Account>(conn) {
+            Ok(r) => r,
+            Err(e) => {
+                error!("Error loading accounts: {}", e);
+                Vec::new()
+            }
+        }
     }
 }

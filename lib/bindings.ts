@@ -26,4 +26,8 @@ export function fetchRawMisskeyApi(serverDomain: string, endpoint: string, parms
     return invoke()<any>("fetch_raw_misskey_api", { serverDomain,endpoint,parms })
 }
 
+export function findAllAccounts() {
+    return invoke()<Account[]>("find_all_accounts")
+}
 
+export type Account = { id: number; user_id: string; display_name: string; user_name: string; server_domain: string; access_token: string }

@@ -12,14 +12,33 @@ import {
     AccordionBody,
 } from "@material-tailwind/react";
 import {
+    HomeIcon,
+    UserCircleIcon,
     CloudIcon,
     Cog6ToothIcon,
     ListBulletIcon,
 } from "@heroicons/react/24/solid";
 import { ChevronRightIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
+import { Account, findAllAccounts } from "@/lib/bindings";
+import { debug, error } from "tauri-plugin-log-api";
 
 export function SideBar({ className }: { className?: string }) {
+
+    const [loading, setLoading] = React.useState(true);
+    const [accounts, setAccounts] = React.useState([] as Account[]);
+
+    React.useEffect(() => {
+        if (!loading) return;
+        findAllAccounts().then((a) => {
+            setAccounts(a);
+            setLoading(false);
+        }).catch((e) => {
+            error("Error: ", e);
+            setLoading(false);
+        });
+    }, [loading, accounts]);
+
     return (
         <Card
             className={`${className} w-auto max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5 h-screen shrink-0`}
@@ -27,10 +46,12 @@ export function SideBar({ className }: { className?: string }) {
             <List
                 className="min-w-[10rem] flex-grow"
             >
-                <SideBarItem href={"/"} text={"Home"} icon={Cog6ToothIcon} />
-                <SideBarAccordionItem section={"/Account1"} text={"Account1"} icon={CloudIcon} />
-                <SideBarAccordionItem section={"/Account2"} text={"Account2"} icon={CloudIcon} />
-                <SideBarAccordionItem section={"/Account3"} text={"Account3"} icon={CloudIcon} />
+                <SideBarItem href={"/"} text={"Home"} icon={HomeIcon} />
+                {
+                    accounts.map((a) => (
+                        <SideBarAccordionItem key={a.id} section={a.user_id} userName={a.user_name} displayName={a.display_name} domain={a.server_domain} icon={UserCircleIcon} />
+                    ))
+                }
                 <div className={'flex-grow'} />
                 <SideBarItem href={"/piyo"} text={"Note"} icon={Cog6ToothIcon} />
                 <SideBarItem href={"/appSettings"} text={"App Settings"} icon={Cog6ToothIcon} />
@@ -39,7 +60,7 @@ export function SideBar({ className }: { className?: string }) {
     );
 }
 
-function SideBarAccordionItem({ section, text, icon }: { section: string, text: string, icon: React.ComponentType<{ className?: string }> }) {
+function SideBarAccordionItem({ section, userName, displayName, domain, icon }: { section: string, userName: string, displayName: string, domain: string, icon: React.ComponentType<{ className?: string }> }) {
     const IconElement = icon;
     const router = useRouter();
     const [open, setOpen] = React.useState(0);
@@ -62,9 +83,14 @@ function SideBarAccordionItem({ section, text, icon }: { section: string, text: 
                     <ListItemPrefix>
                         <IconElement className="h-5 w-5" />
                     </ListItemPrefix>
-                    <Typography color="blue-gray" className="mr-auto font-normal">
-                        {text}
-                    </Typography>
+                    <div className="flex-grow" >
+                        <Typography color="blue-gray" className="mr-auto font-black">
+                            {displayName}
+                        </Typography>
+                        <Typography color="blue-gray" className="mr-auto font-normal">
+                            @{userName}@{domain}
+                        </Typography>
+                    </div>
                 </AccordionHeader>
             </ListItem>
             <AccordionBody className="py-1">

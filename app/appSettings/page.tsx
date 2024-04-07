@@ -24,12 +24,10 @@ export default function Page() {
     const [bgImageURL, setBgImageURL] = React.useState("");
 
     const handleOpen = () => {
-        debug("Call handleOpen");
         setOpen((cur) => !cur);
     }
     const openBrowserMiAuth = () => miauthInit(uuid, domainURL);
     const checkMiAuth = () => {
-        debug("Call checkMiAuth");
         miauthCheck(uuid, domainURL);
         handleOpen();
     }

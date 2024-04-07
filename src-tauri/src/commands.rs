@@ -8,10 +8,16 @@ use tauri::{generate_handler, Invoke, Runtime};
 use tracing::{debug, error};
 use webbrowser;
 
-use crate::db::{account_repo::AccountRepo, manager::ConnPool};
+use crate::db::{account::Account, account_repo::AccountRepo, manager::ConnPool};
 
 pub(crate) fn handlers<R: Runtime>() -> impl Fn(Invoke<R>) + Send + Sync + 'static {
-    generate_handler![util_get_version, miauth_init, miauth_check,fetch_raw_misskey_api,]
+    generate_handler![
+        util_get_version,
+        miauth_init,
+        miauth_check,
+        fetch_raw_misskey_api,
+        find_all_accounts,
+    ]
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, specta::Type)]
@@ -23,7 +29,14 @@ struct Note {
 #[cfg(debug_assertions)]
 pub(crate) fn export_ts() {
     tauri_specta::ts::export_with_cfg(
-        specta::collect_types![util_get_version, miauth_init, miauth_check,fetch_raw_misskey_api,].unwrap(),
+        specta::collect_types![
+            util_get_version,
+            miauth_init,
+            miauth_check,
+            fetch_raw_misskey_api,
+            find_all_accounts,
+        ]
+        .unwrap(),
         specta::ts::ExportConfiguration::new().bigint(specta::ts::BigIntExportBehavior::Number),
         "../lib/bindings.ts",
     )
@@ -82,13 +95,7 @@ async fn miauth_check(
     let url = format!("https://{}/api/miauth/{}/check", server_domain, session_id);
     let body = json!({});
     let client = reqwest::Client::new();
-    let resp = client
-        .post(&url)
-        .json(&body)
-        .send()
-        .await?
-        .text()
-        .await?;
+    let resp = client.post(&url).json(&body).send().await?.text().await?;
     let res_json: serde_json::Value = serde_json::from_str(&resp).unwrap();
     debug!("res_json: {:?}", res_json);
     if res_json["ok"].as_bool().unwrap() {
@@ -105,9 +112,20 @@ async fn miauth_check(
             res_json["token"].as_str().unwrap(),
         );
         Ok(true)
-    } else{
+    } else {
         Ok(false)
     }
+}
+
+#[tauri::command]
+#[specta::specta]
+#[tracing::instrument]
+fn find_all_accounts(connection: tauri::State<'_, ConnPool>) -> Vec<Account> {
+    let conn = &mut connection
+        .get()
+        .map_err(|e| error!("Connection not found. {}", e))
+        .unwrap();
+    AccountRepo::find_all(conn)
 }
 
 #[tauri::command]

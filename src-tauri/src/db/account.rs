@@ -1,7 +1,8 @@
 use crate::schema::accounts;
 use diesel::{Insertable, Queryable};
+use serde::Serialize;
 
-#[derive(Queryable)]
+#[derive(Queryable, Debug, Clone, Serialize, specta::Type)]
 pub struct Account {
     pub id: i32,
     pub user_id: String,
