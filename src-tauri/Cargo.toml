@@ -24,7 +24,7 @@ libsqlite3-sys = { version = "0.28.0", features = ["bundled"] }
 diesel_migrations = { version = "2.0.0", features = ["sqlite"] }
 uuid = { version = "1.2.2", features = ["v4", "serde"] }
 webbrowser = "0.8.14"
-reqwest = { version = "0.12.2", features = ["json"] }
+reqwest = { version = "0.12.3", features = ["json"] }
 tokio = { version = "1.37.0", features = ["process"] }
 tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 tracing = "0.1"
