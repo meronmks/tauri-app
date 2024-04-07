@@ -36,6 +36,7 @@ fn main() {
                 .log_name("app")
                 .build(),
         )
+        .plugin(tauri_plugin_websocket::init())
         .invoke_handler(commands::handlers())
         .setup(|app| {
             #[cfg(debug_assertions)]

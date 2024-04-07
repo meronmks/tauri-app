@@ -30,12 +30,12 @@ export function SideBar({ className }: { className?: string }) {
 
     React.useEffect(() => {
         if (!loading) return;
+        setLoading(false);
         findAllAccounts().then((a) => {
             setAccounts(a);
-            setLoading(false);
+            
         }).catch((e) => {
             error("Error: ", e);
-            setLoading(false);
         });
     }, [loading, accounts]);
 
