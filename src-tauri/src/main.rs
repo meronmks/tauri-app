@@ -25,7 +25,6 @@ fn main() {
                 let window = app.get_window("main").unwrap();
                 debug!("Opening devtools");
                 window.open_devtools();
-                window.close_devtools();
             }
             let conn = db::manager::establish_connection(&config);
             db::manager::run_migration(&conn);
