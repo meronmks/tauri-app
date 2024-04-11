@@ -21,6 +21,7 @@ export function TLColumn({ className, endpoint }: {
         const connectWebSocket = async () => {
             console.debug(`Connecting to WebSocket at ${endpoint}`);
             wss.current = await WebSocket.connect(`wss://${endpoint}/streaming`);
+            console.debug(`Connected to WebSocket at ${endpoint}`);
 
             wss.current.addListener((msg: any) => {
                 try {
