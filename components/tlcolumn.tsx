@@ -46,6 +46,13 @@ export function TLColumn({ className, endpoint }: {
                     }
                 }
             }));
+
+            setInterval(() => {
+                console.debug(`Sending keepalive to WebSocket ${endpoint}`);
+                wss.current?.send("h").catch((e) => {
+                    console.error(`Error sending keepalive: ${e}`);
+                });
+            }, 30000);
         };
 
         const disconnectWebSocket = () => {
