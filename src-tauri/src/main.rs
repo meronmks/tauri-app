@@ -3,8 +3,7 @@
 
 use crate::db::manager::ConnPool;
 use tauri::Manager;
-use tauri_plugin_log::{LogTarget, TimezoneStrategy};
-use tracing::{debug, log::LevelFilter};
+use tracing::debug;
 
 mod commands;
 mod db;
@@ -16,29 +15,11 @@ fn main() {
     commands::export_ts();
 
     tauri::Builder::default()
-        .plugin(
-            tauri_plugin_log::Builder::new()
-                .targets([
-                    LogTarget::Stdout,
-                    LogTarget::Webview,
-                    LogTarget::LogDir
-                ])
-                .level(
-                    #[cfg(debug_assertions)]{
-                        LevelFilter::Debug
-                    },
-                    #[cfg(not(debug_assertions))]{
-                        LevelFilter::Info
-                    },
-                )
-                .timezone_strategy(TimezoneStrategy::UseLocal)
-                .max_file_size(100000)
-                .log_name("app")
-                .build(),
-        )
         .plugin(tauri_plugin_websocket::init())
         .invoke_handler(commands::handlers())
-        .setup(|app| {
+        .setup(move |app| {
+            let config = app.config();
+            service::logging::initialize_logger(&config);
             #[cfg(debug_assertions)]
             {
                 let window = app.get_window("main").unwrap();
@@ -46,7 +27,6 @@ fn main() {
                 window.open_devtools();
                 window.close_devtools();
             }
-            let config = app.config();
             let conn = db::manager::establish_connection(&config);
             db::manager::run_migration(&conn);
             app.manage::<ConnPool>(conn);

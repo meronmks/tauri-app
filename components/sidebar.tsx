@@ -21,7 +21,7 @@ import {
 import { ChevronRightIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 import { Account, findAllAccounts } from "@/lib/bindings";
-import { debug, error } from "tauri-plugin-log-api";
+import { toastThrownError } from "@/lib/toast";
 
 export function SideBar({ className }: { className?: string }) {
 
@@ -35,7 +35,7 @@ export function SideBar({ className }: { className?: string }) {
             setAccounts(a);
             
         }).catch((e) => {
-            error("Error: ", e);
+            toastThrownError(e);
         });
     }, [loading, accounts]);
 

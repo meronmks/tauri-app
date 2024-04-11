@@ -4,7 +4,6 @@ import React, { useEffect } from "react";
 import { Card, Avatar, List, ListItem } from "@material-tailwind/react";
 import TimelineNote from "./timelinenote";
 import WebSocket from "tauri-plugin-websocket-api";
-import { debug, error } from "tauri-plugin-log-api";
 
 export function TLColumn({ className, endpoint }: {
     className?: string;
@@ -16,20 +15,22 @@ export function TLColumn({ className, endpoint }: {
 
     React.useEffect(() => {
         if (!loading) return;
-        debug(`Loading TLColumn with endpoint ${endpoint}`);
+        console.debug(`Loading TLColumn with endpoint ${endpoint}`);
         setLoading(false);
 
         const connectWebSocket = async () => {
-            debug(`Connecting to WebSocket at ${endpoint}`);
+            console.debug(`Connecting to WebSocket at ${endpoint}`);
             wss.current = await WebSocket.connect(`wss://${endpoint}/streaming`);
 
             wss.current.addListener((msg: any) => {
                 try {
-                    const jsonData = JSON.parse(msg.data);
-                    setNotes(prevNotes => [jsonData, ...prevNotes]);
-                    debug(`Received WebSocket message!`);
+                    if (msg.data){
+                        const jsonData = JSON.parse(msg.data);
+                        setNotes(prevNotes => [jsonData, ...prevNotes]);
+                        console.debug(`Received WebSocket message!`);
+                    }
                 } catch (e) {
-                    error(`Error parsing WebSocket message: ${e}`);
+                    console.error(`Error parsing WebSocket message: ${e}`);
                 }
             });
 
@@ -47,8 +48,9 @@ export function TLColumn({ className, endpoint }: {
         };
 
         const disconnectWebSocket = () => {
+            console.debug("Pre Disconnecting from WebSocket");
             if (wss.current) {
-                debug("Disconnecting from WebSocket");
+                console.debug("Disconnecting from WebSocket");
                 wss.current.disconnect();
                 wss.current = null;
             }
@@ -65,7 +67,7 @@ export function TLColumn({ className, endpoint }: {
     // ウィンドウがアンロードされる前にWebSocketを切断する
     React.useEffect(() => {
         const handleBeforeUnload = () => {
-            debug("Disconnecting from WebSocket before unloading window");
+            console.debug("Disconnecting from WebSocket before unloading window");
             wss.current?.disconnect();
         };
         window.addEventListener('beforeunload', handleBeforeUnload);
