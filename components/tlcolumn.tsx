@@ -84,14 +84,14 @@ export function TLColumn({ className, endpoint }: {
                 className="min-w-[10rem] flex-grow"
             >
                 {
-                    notes.slice(0).reverse().map((n) => (
+                    notes.map((note, index) => (
                         <ListItem
-                            key={n.body.body.id}
+                            key={index}
                             className="p-0 cursor-default"
                             ripple={false}
                             onClick={(e) => e.preventDefault()}
                         >
-                            <TimelineNote note={n.body.body} />
+                            <TimelineNote note={note.body.body} />
                         </ListItem>
                     ))
                 }
