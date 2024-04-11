@@ -9,18 +9,20 @@ export function TLColumn({ className, endpoint }: {
     className?: string;
     endpoint: string;
 }) {
-    const [loading, setLoading] = React.useState(true);
     const wss = React.useRef<WebSocket | null>(null);
     const [notes, setNotes] = React.useState([] as any[]);
 
     React.useEffect(() => {
-        if (!loading) return;
         console.debug(`Loading TLColumn with endpoint ${endpoint}`);
-        setLoading(false);
+        let unmounted = false;
 
         const connectWebSocket = async () => {
             console.debug(`Connecting to WebSocket at ${endpoint}`);
             wss.current = await WebSocket.connect(`wss://${endpoint}/streaming`);
+            if (unmounted) {
+                disconnectWebSocket();
+                return;
+            }
             console.debug(`Connected to WebSocket at ${endpoint}`);
 
             wss.current.addListener((msg: any) => {
@@ -57,6 +59,7 @@ export function TLColumn({ className, endpoint }: {
 
         const disconnectWebSocket = () => {
             console.debug("Pre Disconnecting from WebSocket");
+            unmounted = true;
             if (wss.current) {
                 console.debug("Disconnecting from WebSocket");
                 wss.current.disconnect();
@@ -70,7 +73,7 @@ export function TLColumn({ className, endpoint }: {
             window.removeEventListener('beforeunload', disconnectWebSocket);
             disconnectWebSocket();
         };
-    }, [endpoint, loading]);
+    }, [endpoint]);
 
     // ウィンドウがアンロードされる前にWebSocketを切断する
     React.useEffect(() => {
