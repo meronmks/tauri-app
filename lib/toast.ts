@@ -3,12 +3,21 @@ import { toast } from "react-toastify";
 export function toastNormal(message: string) {
     toast(message, {
         pauseOnFocusLoss: false,
+		pauseOnHover: false,
     });
+}
+
+export function toastInfo(message: string) {
+	toast.info(message, {
+		pauseOnFocusLoss: false,
+		pauseOnHover: false,
+	});
 }
 
 export function toastSuccess(message: string) {
 	toast.success(message, {
 		pauseOnFocusLoss: false,
+		pauseOnHover: false,
 	});
 }
 
