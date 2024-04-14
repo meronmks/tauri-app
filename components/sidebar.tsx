@@ -45,8 +45,8 @@ export function SideBar({ className }: { className?: string }) {
             >
                 <SideBarItem href={"/"} text={"Home"} icon={HomeIcon} />
                 {
-                    accounts.map((a) => (
-                        <SideBarAccordionItem key={a.id} section={a.user_id} userName={a.user_name} displayName={a.display_name} domain={a.server_domain} icon={UserCircleIcon} />
+                    accounts.map((a, index) => (
+                        <SideBarAccordionItem key={index} section={a.user_id} userName={a.user_name} displayName={a.display_name} domain={a.server_domain} icon={UserCircleIcon} />
                     ))
                 }
                 <div className={'flex-grow'} />
