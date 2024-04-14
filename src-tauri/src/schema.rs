@@ -10,3 +10,17 @@ diesel::table! {
         accessToken -> Text,
     }
 }
+
+diesel::table! {
+    timelines (id) {
+        id -> Integer,
+        accountID -> Nullable<Integer>,
+        serverDomain -> Text,
+        channel -> Text,
+    }
+}
+
+diesel::allow_tables_to_appear_in_same_query!(
+    accounts,
+    timelines,
+);

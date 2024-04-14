@@ -30,4 +30,13 @@ export function findAllAccounts() {
     return invoke()<Account[]>("find_all_accounts")
 }
 
+export function createTimeline(userId: number, serverDomain: string, channel: string) {
+    return invoke()<number>("create_timeline", { userId,serverDomain,channel })
+}
+
+export function findAllTimelines() {
+    return invoke()<Timeline[]>("find_all_timelines")
+}
+
+export type Timeline = { id: number; account_id: number | null; server_domain: string; channel: string }
 export type Account = { id: number; user_id: string; display_name: string; user_name: string; server_domain: string; access_token: string }

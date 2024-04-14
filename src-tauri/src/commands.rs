@@ -1,14 +1,13 @@
-use std::{fmt::Display, sync::Mutex};
+use std::{fmt::Display};
 
-use reqwest::Error;
-use serde::{de, Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 use serde_json::json;
 use specta;
 use tauri::{generate_handler, Invoke, Runtime};
-use tracing::{debug, error};
+use tracing::{debug, error, info};
 use webbrowser;
 
-use crate::db::{account::Account, account_repo::AccountRepo, manager::ConnPool};
+use crate::db::{account::Account, account_repo::AccountRepo, timeline::Timeline, timeline_repo::TimelineRepo, manager::ConnPool};
 
 pub(crate) fn handlers<R: Runtime>() -> impl Fn(Invoke<R>) + Send + Sync + 'static {
     generate_handler![
@@ -17,6 +16,8 @@ pub(crate) fn handlers<R: Runtime>() -> impl Fn(Invoke<R>) + Send + Sync + 'stat
         miauth_check,
         fetch_raw_misskey_api,
         find_all_accounts,
+        create_timeline,
+        find_all_timelines,
     ]
 }
 
@@ -35,6 +36,8 @@ pub(crate) fn export_ts() {
             miauth_check,
             fetch_raw_misskey_api,
             find_all_accounts,
+            create_timeline,
+            find_all_timelines,
         ]
         .unwrap(),
         specta::ts::ExportConfiguration::new().bigint(specta::ts::BigIntExportBehavior::Number),
@@ -121,11 +124,14 @@ async fn miauth_check(
 #[specta::specta]
 #[tracing::instrument]
 fn find_all_accounts(connection: tauri::State<'_, ConnPool>) -> Vec<Account> {
+    info!("find_all_accounts");
     let conn = &mut connection
         .get()
         .map_err(|e| error!("Connection not found. {}", e))
         .unwrap();
-    AccountRepo::find_all(conn)
+    let res = AccountRepo::find_all(conn);
+    debug!("res: {:?}", res);
+    res
 }
 
 #[tauri::command]
@@ -152,4 +158,31 @@ async fn fetch_raw_misskey_api(
     let res_json: serde_json::Value = serde_json::from_str(&resp).unwrap();
     debug!("res_json: {:?}", res_json);
     Ok(res_json)
+}
+
+#[tauri::command]
+#[specta::specta]
+#[tracing::instrument]
+fn create_timeline(
+    user_id: i32,
+    server_domain: String,
+    channel: String,
+    connection: tauri::State<'_, ConnPool>,
+) -> usize {
+    let conn = &mut connection
+        .get()
+        .map_err(|e| error!("Connection not found. {}", e))
+        .unwrap();
+    TimelineRepo::create_timeline(conn, &user_id, &server_domain, &channel)
+}
+
+#[tauri::command]
+#[specta::specta]
+#[tracing::instrument]
+fn find_all_timelines(connection: tauri::State<'_, ConnPool>) -> Vec<Timeline> {
+    let conn = &mut connection
+        .get()
+        .map_err(|e| error!("Connection not found. {}", e))
+        .unwrap();
+    TimelineRepo::find_all(conn)
 }
