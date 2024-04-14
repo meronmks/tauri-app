@@ -5,6 +5,7 @@ import { Card, Avatar, List, ListItem } from "@material-tailwind/react";
 import TimelineNote from "./timelinenote";
 import WebSocket from "tauri-plugin-websocket-api";
 import { toastNormal } from "@/lib/toast";
+import { Virtuoso } from "react-virtuoso";
 
 export function TLColumn({ className, endpoint, channel, token }: {
     className?: string;
@@ -105,22 +106,13 @@ export function TLColumn({ className, endpoint, channel, token }: {
         <Card
             className={`${className} w-auto p-0 h-auto overflow-y-auto`}
         >
-            <List
+            <Virtuoso
                 className="min-w-[10rem] flex-grow"
-            >
-                {
-                    notes.map((note, index) => (
-                        <ListItem
-                            key={index}
-                            className="p-0 cursor-default"
-                            ripple={false}
-                            onClick={(e) => e.preventDefault()}
-                        >
-                            <TimelineNote note={note.body.body} />
-                        </ListItem>
-                    ))
-                }
-            </List>
+                totalCount={notes.length}
+                itemContent={(index) => (
+                    <TimelineNote note={notes[index].body.body} />
+                )}
+            />
         </Card>
     );
 }
