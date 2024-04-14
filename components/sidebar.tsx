@@ -25,19 +25,16 @@ import { toastThrownError } from "@/lib/toast";
 
 export function SideBar({ className }: { className?: string }) {
 
-    const [loading, setLoading] = React.useState(true);
     const [accounts, setAccounts] = React.useState([] as Account[]);
 
     React.useEffect(() => {
-        if (!loading) return;
-        setLoading(false);
         findAllAccounts().then((a) => {
             setAccounts(a);
             
         }).catch((e) => {
             toastThrownError(e);
         });
-    }, [loading, accounts]);
+    }, []);
 
     return (
         <Card
