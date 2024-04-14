@@ -15,6 +15,7 @@ export function TLColumn({ className, endpoint, channel, token }: {
 }) {
     const wss = React.useRef<WebSocket | null>(null);
     const [notes, setNotes] = React.useState([] as any[]);
+    const maxNotes = 300;
 
     React.useEffect(() => {
         console.debug(`Loading TLColumn with endpoint ${endpoint}`);
@@ -40,6 +41,11 @@ export function TLColumn({ className, endpoint, channel, token }: {
                     if (msg.data){
                         console.debug(msg.data);
                         const jsonData = JSON.parse(msg.data);
+
+                        if (notes.length >= maxNotes) {
+                            setNotes(prevNotes => prevNotes.slice(0, maxNotes - 1));
+                        }
+
                         setNotes(prevNotes => [jsonData, ...prevNotes]);
                         console.debug(`Received WebSocket message!`);
                     }
