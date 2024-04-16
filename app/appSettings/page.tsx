@@ -14,28 +14,47 @@ import {
 } from "@material-tailwind/react";
 import { fetchRawMisskeyApi, miauthCheck, miauthInit } from "@/lib/bindings";
 import { v4 as uuidv4 } from 'uuid';
-import { debug } from "tauri-plugin-log-api";
+import { toastError, toastSuccess } from "@/lib/toast";
+import { ToastContainer } from "react-toastify";
 
 export default function Page() {
 
     const [open, setOpen] = React.useState(false);
     const [domainURL, setDomainURL] = React.useState("");
-    const [uuid, setUuid] = React.useState(uuidv4());
+    const [uuid, setUuid] = React.useState("");
     const [bgImageURL, setBgImageURL] = React.useState("");
+    const [disabledLogin, setDisabledLogin] = React.useState(true);
+    const [disabledCheck, setDisabledCheck] = React.useState(true);
 
     const handleOpen = () => {
         setOpen((cur) => !cur);
     }
-    const openBrowserMiAuth = () => miauthInit(uuid, domainURL);
-    const checkMiAuth = () => {
-        miauthCheck(uuid, domainURL);
-        handleOpen();
+    const openBrowserMiAuth = () => {
+        setUuid(uuidv4());
+        setDisabledCheck(false);
+        miauthInit(uuid, domainURL);
+    }
+    const checkMiAuth = async () => {
+        let result = await miauthCheck(uuid, domainURL);
+        if (result) {
+            toastSuccess("Login Success");
+            handleOpen();
+        } else {
+            toastError("Login Failed");
+        }
     }
 
     React.useEffect(() => {
+        if (domainURL.length > 0) {
+            setDisabledLogin(false);
+        } else {
+            setDisabledLogin(true);
+            setDisabledCheck(true);
+        }
+        
         const timer = setTimeout(async () => {
             const json = await fetchRawMisskeyApi(domainURL, "meta", '{ "detail": false }');
-            debug(json?.backgroundImageUrl);
+            console.log(json?.backgroundImageUrl);
             setBgImageURL(json?.backgroundImageUrl);
         }, 1000);
 
@@ -72,13 +91,23 @@ export default function Page() {
                         <Input label="Server Domain" size="lg" placeholder="misskey.io" value={domainURL} onChange={e => setDomainURL(e.target.value)} />
                     </CardBody>
                     <CardFooter className="pt-0">
-                        <Button variant="gradient" onClick={openBrowserMiAuth} fullWidth>
+                        <Button disabled={disabledLogin} variant="gradient" onClick={openBrowserMiAuth} fullWidth>
                             Login
                         </Button>
-                        <Button className="mt-4" variant="gradient" onClick={checkMiAuth} fullWidth>
+                        <Button disabled={disabledCheck} className="mt-4" variant="gradient" onClick={checkMiAuth} fullWidth>
                             Auth Check
                         </Button>
                     </CardFooter>
+                    <ToastContainer
+                        position="bottom-right"
+                        autoClose={5000}
+                        hideProgressBar={false}
+                        newestOnTop={false}
+                        closeOnClick
+                        rtl={false}
+                        draggable
+                        theme="light"
+                    />
                 </Card>
             </Dialog>
         </>
