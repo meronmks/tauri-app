@@ -64,12 +64,22 @@ dayjs.updateLocale('ja', {
 });
 
 export default function TimelineNote({ className, note }: { className?: string, note: any }) {
-    const [noteCreatedAt, setNoteCreatedAt] = React.useState(dayjs(note.createdAt).fromNow());
+    const [noteCreatedAt, setNoteCreatedAt] = React.useState("");
     React.useEffect(() => {
         let intervalTimeout: NodeJS.Timeout | null = null;
 
-        intervalTimeout = setInterval(() => {
+        if (note.createdAt) {
             setNoteCreatedAt(dayjs(note.createdAt).fromNow());
+        } else {
+            console.error("Note has no createdAt field");
+            console.debug(note);
+            setNoteCreatedAt("Unknown time ago");
+        }
+
+        intervalTimeout = setInterval(() => {
+            if (note.createdAt) {
+                setNoteCreatedAt(dayjs(note.createdAt).fromNow());
+            }
         }, 1000);
 
         return () => {
