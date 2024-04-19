@@ -39,7 +39,6 @@ export function TLColumn({ className, endpoint, channel, token }: {
             wss.current.addListener((msg: any) => {
                 try {
                     if (msg.data){
-                        console.debug(msg.data);
                         const jsonData = JSON.parse(msg.data);
 
                         if (notes.length >= maxNotes) {
@@ -47,7 +46,10 @@ export function TLColumn({ className, endpoint, channel, token }: {
                         }
 
                         setNotes(prevNotes => [jsonData, ...prevNotes]);
-                        console.debug(`Received WebSocket message!`);
+                    } else {
+                        console.warn(msg);
+                        disconnectWebSocket();
+                        connectWebSocket();
                     }
                 } catch (e) {
                     console.error(`Error parsing WebSocket message: ${e}`);
