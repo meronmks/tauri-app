@@ -109,26 +109,26 @@ export default function TimelineNote({ className, note }: { className?: string, 
                         alt={note.user.username}
                         className="shrink-0"
                     />
-                    <span className="block shrink-1 overflow-hidden p-0 ml-2 text-base">
+                    <Typography className="block shrink-1 overflow-hidden p-0 ml-2 text-base">
                         {note.user.name}
-                    </span>
-                    <span className="cursor-text shrink-[9999999] overflow-hidden text-ellipsis ml-2 text-base">
+                    </Typography>
+                    <Typography className="cursor-text shrink-[9999999] overflow-hidden text-ellipsis ml-2 text-base">
                         @{note.user.username}
-                    </span>
-                    <span className="shrink-0 ml-auto text-[.9em]">
+                    </Typography>
+                    <Typography className="shrink-0 ml-auto text-[.9em]">
                         {noteCreatedAt}
-                    </span>
+                    </Typography>
                 </div>
             </CardHeader>
-            <div className="flex pb-2">
+            <Typography className="flex pb-2">
                 ====Instance Bar====
-            </div>
+            </Typography>
             <CardBody
                 className="mb-6 p-0"
             >
-                <span className="cursor-text text-wrap w-full text-[.9em]">
+                <Typography className="cursor-text text-wrap w-full text-[.9em]">
                     {note.text}
-                </span>
+                </Typography>
                 {/* <picture>
                     <img
                         className="h-96 w-full object-cover object-center rounded-lg"
