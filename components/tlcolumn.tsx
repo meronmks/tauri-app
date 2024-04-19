@@ -96,6 +96,7 @@ export function TLColumn({ className, endpoint, channel, token }: {
             window.removeEventListener('beforeunload', disconnectWebSocket);
             disconnectWebSocket();
         };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [endpoint]);
 
     // ウィンドウがアンロードされる前にWebSocketを切断する
