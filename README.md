@@ -1,6 +1,14 @@
 # tauri-app
 This is a [Tauri](https://tauri.studio) application.
+A Misskey client that aims to become a "いいかんじ™."
 The application name is tentative.
+
+## Immediate Goals
+* I can read TL on streaming
+* I can enter it with multiple accounts
+* I can make notes with any authenticated account
+* Support custom emoji
+* Support MFM to the extent possible
 
 ## Requirements (building)
 - [Node.js] v20
