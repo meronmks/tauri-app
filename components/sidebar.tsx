@@ -17,6 +17,7 @@ import {
     CloudIcon,
     Cog6ToothIcon,
     ListBulletIcon,
+    PencilIcon
 } from "@heroicons/react/24/solid";
 import { ChevronRightIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
@@ -50,7 +51,7 @@ export function SideBar({ className }: { className?: string }) {
                     ))
                 }
                 <div className={'flex-grow'} />
-                <SideBarItem href={"/piyo"} text={"Note"} icon={Cog6ToothIcon} />
+                <SideBarItem href={"/piyo"} text={"Note"} icon={PencilIcon} />
                 <SideBarItem href={"/appSettings"} text={"App Settings"} icon={Cog6ToothIcon} />
             </List>
         </Card>
