@@ -1,10 +1,11 @@
 "use client";
 
-import { Avatar, Card, CardBody, CardHeader, Typography, Button, ButtonGroup } from "@material-tailwind/react";
+import { Avatar, Card, CardBody, CardHeader, Typography, IconButton, ButtonGroup } from "@material-tailwind/react";
 import dayjs, { extend } from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import updateLocale from "dayjs/plugin/updateLocale.js"
 import React from "react";
+import { ArrowUturnLeftIcon, ArrowPathRoundedSquareIcon, PlusIcon, EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 
 const relativeTimeConfig = {
     thresholds: [
@@ -135,12 +136,20 @@ export default function TimelineNote({ className, note }: { className?: string, 
                         alt="nature image"
                     />
                 </picture> */}
-                <ButtonGroup size="sm" fullWidth>
-                    <Button>Reply</Button>
-                    <Button>ReNote</Button>
-                    <Button>Reaction</Button>
-                    <Button>Other</Button>
-                </ButtonGroup>
+                <div className="flex items-center gap-2 mt-2">
+                    <IconButton variant="text">
+                        <ArrowUturnLeftIcon className="h-5 w-5" />
+                    </IconButton>
+                    <IconButton variant="text">
+                        <ArrowPathRoundedSquareIcon className="h-5 w-5" />
+                    </IconButton>
+                    <IconButton variant="text">
+                        <PlusIcon className="h-5 w-5" />
+                    </IconButton>
+                    <IconButton variant="text">
+                        <EllipsisHorizontalIcon className="h-5 w-5" />
+                    </IconButton>
+                </div>
             </CardBody>
         </Card>
     );
