@@ -3,6 +3,7 @@
 import React from "react";
 import {
     Card,
+    Dialog,
     Typography,
     List,
     ListItem,
@@ -23,38 +24,47 @@ import { ChevronRightIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 import { Account, findAllAccounts } from "@/lib/bindings";
 import { toastThrownError } from "@/lib/toast";
+import { NotePostDialog } from "./notepostdialog";
 
 export function SideBar({ className }: { className?: string }) {
 
+    const [open, setOpen] = React.useState(false);
     const [accounts, setAccounts] = React.useState([] as Account[]);
+
+    const handleOpen = () => {
+        setOpen((cur) => !cur);
+    }
 
     React.useEffect(() => {
         findAllAccounts().then((a) => {
             setAccounts(a);
-            
+
         }).catch((e) => {
             toastThrownError(e);
         });
     }, []);
 
     return (
-        <Card
-            className={`${className} w-auto max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5 h-screen shrink-0`}
-        >
-            <List
-                className="min-w-[10rem] flex-grow"
+        <>
+            <NotePostDialog className={`bg-transparent shadow-none p-8 bg-cover`} open={open} handleOpen={handleOpen} />
+            <Card
+                className={`${className} w-auto max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5 h-screen shrink-0`}
             >
-                <SideBarItem href={"/"} text={"Home"} icon={HomeIcon} />
-                {
-                    accounts.map((a, index) => (
-                        <SideBarAccordionItem key={index} section={a.user_id} userName={a.user_name} displayName={a.display_name} domain={a.server_domain} icon={UserCircleIcon} />
-                    ))
-                }
-                <div className={'flex-grow'} />
-                <SideBarItem href={"/piyo"} text={"Note"} icon={PencilIcon} />
-                <SideBarItem href={"/appSettings"} text={"App Settings"} icon={Cog6ToothIcon} />
-            </List>
-        </Card>
+                <List
+                    className="min-w-[10rem] flex-grow"
+                >
+                    <SideBarItem href={"/"} text={"Home"} icon={HomeIcon} />
+                    {
+                        accounts.map((a, index) => (
+                            <SideBarAccordionItem key={index} section={a.user_id} userName={a.user_name} displayName={a.display_name} domain={a.server_domain} icon={UserCircleIcon} />
+                        ))
+                    }
+                    <div className={'flex-grow'} />
+                    <SideBarNoteItem onClick={handleOpen} text={"Note"} icon={PencilIcon} />
+                    <SideBarItem href={"/appSettings"} text={"App Settings"} icon={Cog6ToothIcon} />
+                </List>
+            </Card>
+        </>
     );
 }
 
@@ -108,6 +118,20 @@ function SideBarItem({ href, text, icon }: { href: string, text: string, icon: R
     return (
         <ListItem
             onClick={() => router.push(href)}
+        >
+            <ListItemPrefix>
+                <IconElement className="h-5 w-5" />
+            </ListItemPrefix>
+            {text}
+        </ListItem>
+    );
+}
+
+function SideBarNoteItem({ onClick, text, icon }: { onClick?: React.MouseEventHandler<HTMLDivElement> | undefined, text: string, icon: React.ComponentType<{ className?: string }> }) {
+    const IconElement = icon;
+    return (
+        <ListItem
+            onClick={onClick}
         >
             <ListItemPrefix>
                 <IconElement className="h-5 w-5" />
