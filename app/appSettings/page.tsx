@@ -67,7 +67,7 @@ export default function Page() {
                 <Button onClick={handleOpen}>Add Account</Button>
             </div>
             <Dialog
-                size="xs"
+                size="md"
                 open={open}
                 handler={handleOpen}
                 className={`bg-transparent shadow-none p-8 bg-cover`}
