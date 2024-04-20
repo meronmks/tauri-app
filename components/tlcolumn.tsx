@@ -47,7 +47,7 @@ export function TLColumn({ className, endpoint, channel, token }: {
 
                         setNotes(prevNotes => [jsonData, ...prevNotes]);
                     } else {
-                        console.warn(msg);
+                        console.warn(`[WebSocket] ${endpoint}: ${msg}`);
                         disconnectWebSocket();
                         connectWebSocket();
                     }
