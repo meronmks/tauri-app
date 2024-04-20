@@ -120,9 +120,11 @@ export default function TimelineNote({ className, note }: { className?: string, 
                     </Typography>
                 </div>
             </CardHeader>
-            <Typography className="flex pb-2">
-                ====Instance Bar====
-            </Typography>
+            { note.user.host != null &&
+                <Typography className="flex pb-2">
+                    {note.user.host}
+                </Typography>
+            }
             <CardBody
                 className="mb-6 p-0"
             >
