@@ -195,13 +195,30 @@ export default function TimelineNote({ className, note }: { className?: string, 
                         {note.text}
                     </Typography>
                 }
-                {/* <picture>
-                    <img
-                        className="h-96 w-full object-cover object-center rounded-lg"
-                        src="https://images.unsplash.com/photo-1682407186023-12c70a4a35e0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2832&q=80"
-                        alt="nature image"
-                    />
-                </picture> */}
+                {
+                    note.files.map((file: any, index: React.Key | null | undefined) => (
+                        <div key={index} className="m-1">
+                            {file.isSensitive == true &&
+                                <picture>
+                                    <img
+                                        className="h-auto w-full object-cover object-center rounded-lg blur-md hover:blur-none"
+                                        src={file.thumbnailUrl}
+                                        alt={file.name}
+                                    />
+                                </picture>
+                            }
+                            {file.isSensitive != true &&
+                                <picture>
+                                    <img
+                                        className="h-auto w-full object-cover object-center rounded-lg"
+                                        src={file.thumbnailUrl}
+                                        alt={file.name}
+                                    />
+                                </picture>
+                            }
+                        </div>
+                    ))
+                }
                 <div className="flex items-center gap-2 mt-2">
                     <IconButton variant="text">
                         <ArrowUturnLeftIcon className="h-5 w-5" />
