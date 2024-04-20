@@ -82,8 +82,6 @@ export default function TimelineNote({ className, note }: { className?: string, 
         if (note.renoteId != null && note.renote.createdAt) {
             setRenoteCreatedAt(dayjs(note.renote.createdAt).fromNow());
         } else {
-            console.error("Renote has no createdAt field");
-            console.debug(note);
             setRenoteCreatedAt("Unknown time ago");
         }
 
