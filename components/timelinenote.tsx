@@ -6,6 +6,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import updateLocale from "dayjs/plugin/updateLocale.js"
 import React from "react";
 import { ArrowUturnLeftIcon, ArrowPathRoundedSquareIcon, PlusIcon, EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
+import { toastNormal } from "@/lib/toast";
 
 const relativeTimeConfig = {
     thresholds: [
@@ -91,6 +92,11 @@ export default function TimelineNote({ className, note }: { className?: string, 
         };
     }, [note]);
 
+    const copyRawJson = () => {
+        navigator.clipboard.writeText(JSON.stringify(note));
+        toastNormal("Copied raw JSON to clipboard");
+    }
+
     return (
         <Card
             className={`${className} w-full p-2 h-auto`}
@@ -148,7 +154,7 @@ export default function TimelineNote({ className, note }: { className?: string, 
                     <IconButton variant="text">
                         <PlusIcon className="h-5 w-5" />
                     </IconButton>
-                    <IconButton variant="text">
+                    <IconButton onClick={copyRawJson} variant="text">
                         <EllipsisHorizontalIcon className="h-5 w-5" />
                     </IconButton>
                 </div>
