@@ -10,7 +10,9 @@ export function NotePostDialog({ className, open, handleOpen }: { className?: st
     const [noteText, setNoteText] = React.useState("");
     const [accounts, setAccounts] = React.useState([] as Account[]);
     const [selectIndex, setSelectIndex] = React.useState(0);
+    const [postNoteDisabled, setPostNoteDisabled] = React.useState(true);
     const postNote = async () => {
+        setPostNoteDisabled(true);
         const json = await fetchRawMisskeyApi(accounts[selectIndex].server_domain, "notes/create", `{ 
             "i": "${accounts[selectIndex].access_token}",
             "text": "${noteText}",
@@ -19,6 +21,7 @@ export function NotePostDialog({ className, open, handleOpen }: { className?: st
             "poll": null,
             "reactionAcceptance": null,
             "visibility": "public" }`);
+        setPostNoteDisabled(false);
         console.log(json);
         handleOpen();
     }
@@ -31,6 +34,14 @@ export function NotePostDialog({ className, open, handleOpen }: { className?: st
             toastThrownError(e);
         });
     }, []);
+
+    React.useEffect(() => {
+        if (noteText.length > 0) {
+            setPostNoteDisabled(false);
+        } else {
+            setPostNoteDisabled(true);
+        }
+    }, [noteText]);
 
     return (
         <Dialog
@@ -56,7 +67,7 @@ export function NotePostDialog({ className, open, handleOpen }: { className?: st
                     <Textarea onChange={e => setNoteText(e.target.value)} label="Note" />
                 </DialogBody>
                 <DialogFooter>
-                    <Button onClick={postNote}>Post</Button>
+                    <Button disabled={postNoteDisabled} onClick={postNote}>Post</Button>
                 </DialogFooter>
             </Card>
 
