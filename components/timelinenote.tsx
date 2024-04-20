@@ -67,6 +67,7 @@ dayjs.updateLocale('ja', {
 
 export default function TimelineNote({ className, note }: { className?: string, note: any }) {
     const [noteCreatedAt, setNoteCreatedAt] = React.useState("");
+    const [renoteCreatedAt, setRenoteCreatedAt] = React.useState("");
     React.useEffect(() => {
         let intervalTimeout: NodeJS.Timeout | null = null;
 
@@ -78,9 +79,20 @@ export default function TimelineNote({ className, note }: { className?: string, 
             setNoteCreatedAt("Unknown time ago");
         }
 
+        if (note.renoteId != null && note.renote.createdAt) {
+            setRenoteCreatedAt(dayjs(note.renote.createdAt).fromNow());
+        } else {
+            console.error("Renote has no createdAt field");
+            console.debug(note);
+            setRenoteCreatedAt("Unknown time ago");
+        }
+
         intervalTimeout = setInterval(() => {
             if (note.createdAt) {
                 setNoteCreatedAt(dayjs(note.createdAt).fromNow());
+            }
+            if (note.renoteId != null && note.renote.createdAt) {
+                setRenoteCreatedAt(dayjs(note.renote.createdAt).fromNow());
             }
         }, 1000);
 
@@ -107,26 +119,67 @@ export default function TimelineNote({ className, note }: { className?: string, 
                 shadow={false}
                 className="mx-0 flex items-center gap-0 pt-0 pb-2"
             >
-                <div className="flex items-start whitespace-nowrap w-full">
-                    <Avatar
-                        size="md"
-                        variant="circular"
-                        src={note.user.avatarUrl}
-                        alt={note.user.username}
-                        className="shrink-0"
-                    />
-                    <Typography className="block shrink-1 overflow-hidden p-0 ml-2 text-base">
-                        {note.user.name}
-                    </Typography>
-                    <Typography className="cursor-text shrink-[9999999] overflow-hidden text-ellipsis ml-2 text-base">
-                        @{note.user.username}
-                    </Typography>
-                    <Typography className="shrink-0 ml-auto text-[.9em]">
-                        {noteCreatedAt}
-                    </Typography>
+                <div className="flex w-full flex-col gap-0.5">
+                    {note.renoteId != null &&
+                        <>
+                            <div className="flex items-start whitespace-nowrap w-full">
+                                <Avatar
+                                    size="sm"
+                                    variant="circular"
+                                    src={note.user.avatarUrl}
+                                    alt={note.user.username}
+                                    className="shrink-0"
+                                />
+                                <Typography className="block shrink-1 overflow-hidden p-0 ml-2 text-base">
+                                    Renote: {note.user.name}
+                                </Typography>
+                                <Typography className="shrink-0 ml-auto text-[.9em]">
+                                    {noteCreatedAt}
+                                </Typography>
+                            </div>
+                            <div className="flex items-start whitespace-nowrap w-full">
+                                <Avatar
+                                    size="md"
+                                    variant="circular"
+                                    src={note.renote.user.avatarUrl}
+                                    alt={note.renote.user.username}
+                                    className="shrink-0"
+                                />
+                                <Typography className="block shrink-1 overflow-hidden p-0 ml-2 text-base">
+                                    {note.renote.user.name}
+                                </Typography>
+                                <Typography className="cursor-text shrink-[9999999] overflow-hidden text-ellipsis ml-2 text-base">
+                                    @{note.renote.user.username}
+                                </Typography>
+                                <Typography className="shrink-0 ml-auto text-[.9em]">
+                                    {renoteCreatedAt}
+                                </Typography>
+                            </div>
+                        </>
+                    }
+                    {note.renoteId == null &&
+                        <div className="flex items-start whitespace-nowrap w-full">
+                            <Avatar
+                                size="md"
+                                variant="circular"
+                                src={note.user.avatarUrl}
+                                alt={note.user.username}
+                                className="shrink-0"
+                            />
+                            <Typography className="block shrink-1 overflow-hidden p-0 ml-2 text-base">
+                                {note.user.name}
+                            </Typography>
+                            <Typography className="cursor-text shrink-[9999999] overflow-hidden text-ellipsis ml-2 text-base">
+                                @{note.user.username}
+                            </Typography>
+                            <Typography className="shrink-0 ml-auto text-[.9em]">
+                                {noteCreatedAt}
+                            </Typography>
+                        </div>
+                    }
                 </div>
             </CardHeader>
-            { note.user.host != null &&
+            {note.user.host != null &&
                 <Typography className="flex pb-2">
                     {note.user.host}
                 </Typography>
@@ -134,9 +187,16 @@ export default function TimelineNote({ className, note }: { className?: string, 
             <CardBody
                 className="mb-6 p-0"
             >
-                <Typography className="cursor-text text-wrap w-full text-[.9em]">
-                    {note.text}
-                </Typography>
+                {note.renoteId != null &&
+                    <Typography className="cursor-text whitespace-pre-wrap text-wrap w-full text-[.9em]">
+                        {note.renote.text}
+                    </Typography>
+                }
+                {note.renoteId == null &&
+                    <Typography className="cursor-text whitespace-pre-wrap text-wrap w-full text-[.9em]">
+                        {note.text}
+                    </Typography>
+                }
                 {/* <picture>
                     <img
                         className="h-96 w-full object-cover object-center rounded-lg"
