@@ -186,12 +186,12 @@ export default function TimelineNote({ className, note }: { className?: string, 
                 className="mb-6 p-0"
             >
                 {note.renoteId != null &&
-                    <Typography className="cursor-text whitespace-pre-wrap text-wrap w-full text-[.9em]">
+                    <Typography className="cursor-text whitespace-pre-wrap text-wrap break-words w-full text-[.9em]">
                         {note.renote.text}
                     </Typography>
                 }
                 {note.renoteId == null &&
-                    <Typography className="cursor-text whitespace-pre-wrap text-wrap w-full text-[.9em]">
+                    <Typography className="cursor-text whitespace-pre-wrap text-wrap break-words w-full text-[.9em]">
                         {note.text}
                     </Typography>
                 }
