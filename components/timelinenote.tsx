@@ -195,30 +195,78 @@ export default function TimelineNote({ className, note }: { className?: string, 
                         {note.text}
                     </Typography>
                 }
-                {
-                    note.files.map((file: any, index: React.Key | null | undefined) => (
-                        <div key={index} className="m-1">
-                            {file.isSensitive == true &&
-                                <picture>
-                                    <img
-                                        className="h-auto w-full object-cover object-center rounded-lg blur-md hover:blur-none"
-                                        src={file.thumbnailUrl}
-                                        alt={file.name}
-                                    />
-                                </picture>
-                            }
-                            {file.isSensitive != true &&
-                                <picture>
-                                    <img
-                                        className="h-auto w-full object-cover object-center rounded-lg"
-                                        src={file.thumbnailUrl}
-                                        alt={file.name}
-                                    />
-                                </picture>
-                            }
-                        </div>
-                    ))
-                }
+
+                <div className={`grid gap-2 ${((note.files != null && note.files.length > 1) || (note.renoteId != null && note.renote.files.length > 1)) ? 'grid-cols-2' : 'grid-cols-1'}`}>
+                    {
+                        note.files.map((file: any, index: React.Key | null | undefined) => (
+                            <div key={index} className="m-1">
+                                {file.isSensitive == true && file.type.indexOf("image") === 0 &&
+                                    <picture>
+                                        <img
+                                            className="h-auto w-full object-cover object-center rounded-lg blur-md hover:blur-none"
+                                            src={file.thumbnailUrl}
+                                            alt={file.name}
+                                        />
+                                    </picture>
+                                }
+                                {file.isSensitive != true && file.type.indexOf("image") === 0 &&
+                                    <picture>
+                                        <img
+                                            className="h-auto w-full object-cover object-center rounded-lg"
+                                            src={file.thumbnailUrl}
+                                            alt={file.name}
+                                        />
+                                    </picture>
+                                }
+                                {file.isSensitive == true && file.type.indexOf("video") === 0 &&
+                                    <video className="h-auto w-full rounded-lg blur-md hover:blur-none" controls>
+                                        <source src={file.url} type={file.type} />
+                                    </video>
+                                }
+                                {file.isSensitive != true && file.type.indexOf("video") === 0 &&
+                                    <video className="h-auto w-full rounded-lg" controls>
+                                        <source src={file.url} type={file.type} />
+                                    </video>
+                                }
+                            </div>
+                        ))
+                    }
+                    {note.renoteId != null &&
+                        note.renote.files.map((file: any, index: React.Key | null | undefined) => (
+                            <div key={index} className="m-1">
+                                {file.isSensitive == true && file.type.indexOf("image") === 0 &&
+                                    <picture>
+                                        <img
+                                            className="h-auto w-full object-cover object-center rounded-lg blur-md hover:blur-none"
+                                            src={file.thumbnailUrl}
+                                            alt={file.name}
+                                        />
+                                    </picture>
+                                }
+                                {file.isSensitive != true && file.type.indexOf("image") === 0 &&
+                                    <picture>
+                                        <img
+                                            className="h-auto w-full object-cover object-center rounded-lg"
+                                            src={file.thumbnailUrl}
+                                            alt={file.name}
+                                        />
+                                    </picture>
+                                }
+                                {file.isSensitive == true && file.type.indexOf("video") === 0 &&
+                                    <video className="h-auto w-full rounded-lg blur-md hover:blur-none" controls>
+                                        <source src={file.url} type={file.type} />
+                                    </video>
+                                }
+                                {file.isSensitive != true && file.type.indexOf("video") === 0 &&
+                                    <video className="h-auto w-full rounded-lg" controls>
+                                        <source src={file.url} type={file.type} />
+                                    </video>
+                                }
+                            </div>
+                        ))
+                    }
+                </div>
+
                 <div className="flex items-center gap-2 mt-2">
                     <IconButton variant="text">
                         <ArrowUturnLeftIcon className="h-5 w-5" />
